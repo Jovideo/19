@@ -13,6 +13,7 @@ public class Score {
     private Set<String> electiveSubjects; // 선택 과목 목록
 
     public Score(String seq) {
+        // this 키워드를 통해 변수명에 해당하는 객체의 필드에 접근하여 받아온 매개변수의 매개값을 객체의 필드에 대입하여 저장할 수 있다.
         this.scoreId = seq;
         this.subjectScores = new HashMap<>();
         this.subjectGrades = new HashMap<>();
@@ -22,6 +23,7 @@ public class Score {
 
     // Getter
     public String getScoreId() {
+        // private 접근 제어자로 지정한 필드를 Getter 메서드를 통해 값을 가져올 수 있다.
         return scoreId;
     }
 
@@ -39,6 +41,8 @@ public class Score {
     public void addScore(String subject, int round, int score) {
 
     }
+
+    // 중복된 회차 점수 등록 검사
 
 
     // 등급 계산 & 저장
@@ -77,6 +81,13 @@ public class Score {
                 return "N";
             }
         }
+
+        // 과목별 시험 회차와 점수 조회 메서드
+
+
+        // 과목별 시험 회차와 등급 조회 메서드
+
+
         return subject;
     }
 }
