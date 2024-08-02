@@ -5,8 +5,8 @@ public class Subject {
     private String subjectName;
     private String subjectType;
 
-    public Subject(String subjectId, String subjectName, String subjectType) {
-        this.subjectId = subjectId;
+    public Subject(String seq, String subjectName, String subjectType) {
+        this.subjectId = seq;
         this.subjectName = subjectName;
         this.subjectType = subjectType;
     }

@@ -19,6 +19,19 @@ public class Score {
         this.subjectGrades = new HashMap<>();
         this.requiredSubjects = new HashSet<>();
         this.electiveSubjects = new HashSet<>();
+
+        // 필수 과목 추가
+        requiredSubjects.add("Java");
+        requiredSubjects.add("객체지향");
+        requiredSubjects.add("Spring");
+        requiredSubjects.add("JPA");
+        requiredSubjects.add("MySQL");
+
+        // 선택 과목 추가
+        electiveSubjects.add("디자인 패턴");
+        electiveSubjects.add("Spring Security");
+        electiveSubjects.add("Redis");
+        electiveSubjects.add("MongoDB");
     }
 
     // Getter
@@ -97,8 +110,26 @@ public class Score {
                 return "N";
             }
         }else {
-            throw new ScoreException("등록되지 않은 과목입니다.");
+            throw new ScoreException("점수를 잘못 입력하셨습니다.");
             // 예외 처리
+        }
+    }
+
+    // 조건 1. 최소 3개 이상의 필수 과목, 2개 이상의 선택 과목을 선택합니다.
+    public void minScore() {
+        long requiredMin = subjectScores.keySet().stream()
+                .filter(requiredSubjects::contains)
+                .count();
+        long electiveMin = subjectScores.keySet().stream()
+                .filter(electiveSubjects::contains)
+                .count();
+
+        if (requiredMin < 3) {
+            throw new ScoreException("최소 3개의 필수 과목을 입력해야 합니다.");
+        }
+
+        if (electiveMin < 2) {
+            throw new ScoreException("최소 2개의 선택 과목을 입력해야 합니다.");
         }
     }
 
@@ -109,5 +140,28 @@ public class Score {
     // 과목별 시험 회차와 등급 조회 메서드
     public Map<Integer, String> getSubjectGrades(String subject) {
         return subjectGrades.getOrDefault(subject, new HashMap<>());
+    }
+
+
+    public static void main(String[] args) {
+        Score score = new Score("001");
+
+        // 점수 등록 및 예외 처리
+        try {
+            score.addScore("Java", 1, 85);
+        } catch (ScoreException e) {
+            System.out.println("오류: " + e.getMessage());
+        }
+        try {
+            score.addScore("디자인 패턴", 5, 120);
+        } catch (ScoreException e) {
+            System.out.println("오류: " + e.getMessage());
+        }
+
+        // 결과 출력
+        System.out.println("Java 점수: " + score.getSubjectScores("Java"));
+        System.out.println("Java 등급: " + score.getSubjectGrades("Java"));
+        System.out.println("객체지향 점수: " + score.getSubjectScores("객체지향"));
+        System.out.println("객체지향 등급: " + score.getSubjectGrades("객체지향"));
     }
 }
