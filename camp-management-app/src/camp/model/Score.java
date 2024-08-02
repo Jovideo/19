@@ -39,14 +39,30 @@ public class Score {
 
     // 점수 등록 메서드
     public void addScore(String subject, int round, int score) {
+        // 회차와 점수의 유효성 검사
+        if (round < 1 || round > 10) {
+            throw new ScoreException("회차는 1에서 10 사이여야 합니다.");
+        }
+        if (score < 0 || score > 100) {
+            throw new ScoreException("점수는 0에서 100 사이여야 합니다.");
+        }
 
+        subjectScores.putIfAbsent(subject, new HashMap<>());
+        Map<Integer, Integer> rounds = subjectScores.get(subject);
+
+
+        // 중복된 회차 점수 등록 검사
+        if (rounds.containsKey(round)) {
+            throw new ScoreException("이미 등록된 회차 점수입니다.");
+        }
+
+        rounds.put(round, score);
+
+        // 등급 계산 & 저장
+        String grade = calculateGrade(subject, score);
+        subjectGrades.putIfAbsent(subject, new HashMap<>());
+        subjectGrades.get(subject).put(round, grade);
     }
-
-    // 중복된 회차 점수 등록 검사
-
-
-    // 등급 계산 & 저장
-
 
     // 점수에 따른 등급 계산 메서드
     private String calculateGrade(String subject, int score) {
@@ -77,8 +93,11 @@ public class Score {
                 return "D";
             } else if (score >= 50) {
                 return "F";
-            } else {
+            } else if (score < 50) {
                 return "N";
+            } else {
+                throw new IllegalArgumentException("등록되지 않은 과목입니다.");
+                // 예외 처리
             }
         }
 
