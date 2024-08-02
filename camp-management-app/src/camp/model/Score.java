@@ -93,20 +93,21 @@ public class Score {
                 return "D";
             } else if (score >= 50) {
                 return "F";
-            } else if (score < 50) {
-                return "N";
             } else {
-                throw new IllegalArgumentException("등록되지 않은 과목입니다.");
-                // 예외 처리
+                return "N";
             }
+        }else {
+            throw new ScoreException("등록되지 않은 과목입니다.");
+            // 예외 처리
         }
+    }
 
-        // 과목별 시험 회차와 점수 조회 메서드
-
-
-        // 과목별 시험 회차와 등급 조회 메서드
-
-
-        return subject;
+    // 과목별 시험 회차와 점수 조회 메서드
+    public Map<Integer, Integer> getSubjectScores(String subject) {
+        return subjectScores.getOrDefault(subject, new HashMap<>());
+    }
+    // 과목별 시험 회차와 등급 조회 메서드
+    public Map<Integer, String> getSubjectGrades(String subject) {
+        return subjectGrades.getOrDefault(subject, new HashMap<>());
     }
 }
