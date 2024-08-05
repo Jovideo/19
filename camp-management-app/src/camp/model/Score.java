@@ -9,8 +9,14 @@ public class Score {
     private String scoreId;
     private Map<String, Map<Integer, Integer>> subjectScores; // 과목별로 시험 회차와 점수를 저장하는 맵
     private Map<String, Map<Integer, String>> subjectGrades; // 과목별로 시험 회차와 등급을 저장하는 맵
+    // Map 객체는 키-값 쌍을 저장한다.
+    // 각 키는 Map 내에서 유일하며, 각 키에는 하나의 값이 연결되어 있다.
+    // Map은 키를 통해 빠르게 데이터를 검색, 추가 또는 삭제할 수 있는 구조로, 키에 대한 빠른 접근과 키-값 관계를 유지하는 데 적합하다.
     private Set<String> requiredSubjects; // 필수 과목 목록
     private Set<String> electiveSubjects; // 선택 과목 목록
+    // Set 객체는 중복을 허용하지 않는 유일한 값들의 집합을 저장하고,
+    // 각 요소는 Set내에서 단 한번만 존재할 수 있으며,
+    // 주로 데이터의 존재 여부만을 판단하거나 데이터를 중복 없이 저장할 때 사용한다.
 
     public Score(String seq) {
         // this 키워드를 통해 변수명에 해당하는 객체의 필드에 접근하여 받아온 매개변수의 매개값을 객체의 필드에 대입하여 저장할 수 있다.
@@ -153,7 +159,7 @@ public class Score {
             System.out.println("오류: " + e.getMessage());
         }
         try {
-            score.addScore("디자인 패턴", 5, 120);
+            score.addScore("객체지향", 5, 120);
         } catch (ScoreException e) {
             System.out.println("오류: " + e.getMessage());
         }
