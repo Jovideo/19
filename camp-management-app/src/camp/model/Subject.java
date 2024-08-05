@@ -24,4 +24,9 @@ public class Subject {
         return subjectType;
     }
 
+    @Override
+    public String toString() {
+        return subjectName; // 과목 이름만 출력
+    }
+
 }

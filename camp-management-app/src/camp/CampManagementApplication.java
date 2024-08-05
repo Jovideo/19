@@ -167,19 +167,94 @@ public class CampManagementApplication {
     // 수강생 등록
     private static void createStudent() {
         System.out.println("\n수강생을 등록합니다...");
+
+        // 수강생 이름
         System.out.print("수강생 이름 입력: ");
         String studentName = sc.next();
-        // 기능 구현 (필수 과목, 선택 과목)
 
-        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName); // 수강생 인스턴스 생성 예시 코드
-        // 기능 구현
+        // 개행문자 처리
+        sc.nextLine();
+
+        // 필수 과목 입력
+        List<Subject> mandatorySubjects = getSubjectsByType(SUBJECT_TYPE_MANDATORY);
+        List<Subject> selectedMandatorySubjects = new ArrayList<>();
+        while ( selectedMandatorySubjects.size() < 3 ) {
+            System.out.println("필수 과목(Java, 객체지향, Spring, JPA, MySQL)을 입력해주세요.");
+            String[] inputSubjects = sc.nextLine().split(",");
+
+            selectedMandatorySubjects = getValidSubjects(mandatorySubjects, inputSubjects);
+
+            System.out.println(selectedMandatorySubjects);
+            // 필수 과목 3개 이상 입력했는지 확인
+            if ( selectedMandatorySubjects.size () < 3 ) {
+                System.out.println("필수 과목은 최소 3개 이상 선택해야 합니다.");
+            } else {
+                break;
+            }
+        }
+
+        // 선택 과목 입력
+        List<Subject> choiceSubjects = getSubjectsByType(SUBJECT_TYPE_CHOICE);
+        List<Subject> selectedChoiceSubjects = new ArrayList<>();
+        while ( selectedChoiceSubjects.size() < 2 ) {
+            System.out.println("선택 과목(디자인 패턴, Spring Security, Redis, MongoDB)을 입력해주세요.");
+            String[] inputSubjects = sc.nextLine().split(",");
+
+            selectedChoiceSubjects = getValidSubjects(choiceSubjects, inputSubjects);
+
+            // 필수 과목 3개 이상 입력했는지 확인
+            if ( selectedChoiceSubjects.size () < 2 ) {
+                System.out.println("선택 과목은 최소 2개 이상 선택해야 합니다.");
+            } else {
+                break;
+            }
+        }
+
+        // 수강생 인스턴스 생성 및 저장
+        System.out.println();
+        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, selectedChoiceSubjects, selectedMandatorySubjects);
+        studentStore.add(student);
         System.out.println("수강생 등록 성공!\n");
+    }
+
+    // 유효한 과목 리스트를 반환하는 메서드
+    private static List<Subject> getValidSubjects(List<Subject> availableSubjects, String[] inputSubjects) {
+        List<Subject> validSubjects = new ArrayList<>();
+        for (String input : inputSubjects) {
+            input = input.trim();
+            for (Subject subject : availableSubjects) {
+                if (subject.getSubjectName().equalsIgnoreCase(input)) {
+                    validSubjects.add(subject);
+                    break;
+                }
+            }
+        }
+        return validSubjects;
+    }
+
+    // 주어진 타입의 과목 리스트를 반환하는 메서드
+    private static List<Subject> getSubjectsByType(String type) {
+        List<Subject> subjects = new ArrayList<>();
+        for (Subject subject : subjectStore) {
+            if (subject.getSubjectType().equalsIgnoreCase(type)) {
+                subjects.add(subject);
+            }
+        }
+        return subjects;
     }
 
     // 수강생 목록 조회
     private static void inquireStudent() {
         System.out.println("\n수강생 목록을 조회합니다...");
-        // 기능 구현
+        // 수강생 목록이 비어있는지 확인
+        if (studentStore.isEmpty()) {
+            System.out.println("등록된 수강생이 없습니다.");
+            return;
+        }
+        // 수강생 목록 출력
+        for (Student student : studentStore) {
+            System.out.println(student); // Student 클래스의 toString() 메서드 사용
+        }
         System.out.println("\n수강생 목록 조회 성공!");
     }
 
