@@ -11,10 +11,6 @@ public class Score {
     private Map<Integer, Integer> scores; // 회차와 점수 저장
     private Map<Integer, String> grades;  // 회차와 등급 저장
 
-    // 필수 과목과 선택 과목의 등급 기준
-    private static final int MANDATORY_GRADE_A_THRESHOLD = 95;
-    private static final int CHOICE_GRADE_A_THRESHOLD = 90;
-
     public Score(String scoreId, String studentId, String subjectId) {
         this.scoreId = scoreId;
         this.studentId = studentId;
@@ -95,7 +91,7 @@ public class Score {
 
     // 필수 과목의 등급 결정
     private String determineMandatoryGrade(int score) {
-        if (score >= MANDATORY_GRADE_A_THRESHOLD) return "A";
+        if (score >= 95) return "A";
         else if (score >= 90) return "B";
         else if (score >= 80) return "C";
         else if (score >= 70) return "D";
@@ -105,7 +101,7 @@ public class Score {
 
     // 선택 과목의 등급 결정
     private String determineChoiceGrade(int score) {
-        if (score >= CHOICE_GRADE_A_THRESHOLD) return "A";
+        if (score >= 90) return "A";
         else if (score >= 80) return "B";
         else if (score >= 70) return "C";
         else if (score >= 60) return "D";
