@@ -11,6 +11,10 @@ public class Score {
     private Map<Integer, Integer> scores; // 회차와 점수 저장
     private Map<Integer, String> grades;  // 회차와 등급 저장
 
+    // 필수 과목과 선택 과목의 등급 기준
+    private static final int MANDATORY_GRADE_A_THRESHOLD = 95;
+    private static final int CHOICE_GRADE_A_THRESHOLD = 90;
+
     public Score(String scoreId, String studentId, String subjectId) {
         this.scoreId = scoreId;
         this.studentId = studentId;
@@ -89,12 +93,42 @@ public class Score {
         }
     }
 
-    private String determineGrade(int score) {
-        if (score >= 90) return "A";
+    // 필수 과목의 등급 결정
+    private String determineMandatoryGrade(int score) {
+        if (score >= MANDATORY_GRADE_A_THRESHOLD) return "A";
+        else if (score >= 90) return "B";
+        else if (score >= 80) return "C";
+        else if (score >= 70) return "D";
+        else if (score >= 60) return "F";
+        else return "N";
+    }
+
+    // 선택 과목의 등급 결정
+    private String determineChoiceGrade(int score) {
+        if (score >= CHOICE_GRADE_A_THRESHOLD) return "A";
         else if (score >= 80) return "B";
         else if (score >= 70) return "C";
         else if (score >= 60) return "D";
-        else return "F";
+        else if (score >= 50) return "F";
+        else return "N";
+    }
+    // 과목에 따라 적절한 등급 결정 메서드
+    private String determineGrade(int score) {
+        // 필수 과목과 선택 과목을 구분하여 등급을 결정합니다.
+        if (isMandatorySubject()) {
+            return determineMandatoryGrade(score);
+        } else {
+            return determineChoiceGrade(score);
+        }
+    }
+
+    // 과목이 필수 과목인지 여부를 확인하는 메서드
+    private boolean isMandatorySubject() {
+        // 과목 ID를 기준으로 필수 과목 여부를 결정합니다.
+        // 예를 들어, 필수 과목의 ID가 특정 패턴을 따르거나 별도의 목록을 관리할 수 있습니다.
+        // 여기에 적절한 필수 과목 ID 확인 로직을 구현합니다.
+        // 아래는 예시로 특정 ID 패턴을 사용한 경우입니다.
+        return subjectId.startsWith("MANDATORY_");
     }
 
     @Override
