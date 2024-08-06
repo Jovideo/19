@@ -5,9 +5,7 @@ import camp.model.ScoreException;
 import camp.model.Student;
 import camp.model.Subject;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class CampManagementApplication {
     // 데이터 저장소
@@ -356,12 +354,68 @@ public class CampManagementApplication {
     }
 
     // 수강생의 특정 과목 회차별 등급 조회
+
     private static void inquireRoundGradeBySubject() {
         String studentId = getStudentId(); // 관리할 수강생 고유 번호
+        Student student = findStudentById(studentId);
+        if (student == null) {
+            System.out.println("등록된 수강생이 없습니다.");
+            return;
+        }
+
+        // 수강생의 과목 조회
+        getSubjects(studentId);
+        System.out.println();
+
+        System.out.print("과목 이름을 입력하세요: ");
+        String subjectName = sc.next();
+        Subject subject = findSubjectByName(subjectName);
+        if (subject == null) {
+            System.out.println("등록된 과목이 없습니다.");
+            return;
+        }
+
+        // 수강생의 회차 및 등급 조회
+        if(getGrades(studentId,subjectName)!=null){
+            getGrades(studentId,subjectName).forEach((round,grade)->{
+                System.out.println(round+"회차| "+grade);
+            });
+        }else{
+            System.out.println("등록된 회차 별 등급이 없습니다");
+            return;
+        }
+
         // 기능 구현 (조회할 특정 과목)
         System.out.println("회차별 등급을 조회합니다...");
         // 기능 구현
         System.out.println("\n등급 조회 성공!");
+    }
+    private static void getSubjects(String studentId){
+        for(Student student:studentStore){
+            if(student.getStudentId().equals(studentId)){
+                System.out.println(student);
+            }
+        }
+    }
+
+    //과목이름 -> 과목 아이디 반환
+    private static String getSubjectId(String subjectName){
+        for(Subject subject:subjectStore){
+            if(subject.getSubjectName().equals(subjectName)){
+                return subject.getSubjectId();
+            }
+        }
+        return null;
+    }
+
+    //회차별 등급 반환
+    private static Map<Integer,String> getGrades(String studentId, String subjectName){
+        for(Score score:scoreStore){
+            if(score.getStudentId().equals(studentId)&&score.getSubjectId().equals(getSubjectId(subjectName))){
+                return score.getGrades();
+            }
+        }
+        return null;
     }
 
 }
