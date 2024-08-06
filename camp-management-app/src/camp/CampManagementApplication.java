@@ -8,6 +8,7 @@ import camp.model.Subject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class CampManagementApplication {
     // 데이터 저장소
@@ -16,8 +17,20 @@ public class CampManagementApplication {
     private static List<Score> scoreStore = new ArrayList<>();
 
     // 과목 타입
-    private static final String SUBJECT_TYPE_MANDATORY = "필수과목";
-    private static final String SUBJECT_TYPE_CHOICE = "선택과목";
+    private enum SubjectType{
+        MANDATORY("필수과목"),
+        CHOICE("선택과목");
+
+        private final String description;
+
+        SubjectType(String description){
+            this.description = description;
+        }
+        
+        public String getDescription(){
+            return description;
+        }
+    }
 
     // index 관리 필드
     private static int studentIndex = 0;
@@ -45,47 +58,47 @@ public class CampManagementApplication {
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),
                         "Java",
-                        SUBJECT_TYPE_MANDATORY
+                        SubjectType.MANDATORY.getDescription()
                 ),
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),
                         "객체지향",
-                        SUBJECT_TYPE_MANDATORY
+                        SubjectType.MANDATORY.getDescription()
                 ),
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),
                         "Spring",
-                        SUBJECT_TYPE_MANDATORY
+                        SubjectType.MANDATORY.getDescription()
                 ),
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),
                         "JPA",
-                        SUBJECT_TYPE_MANDATORY
+                        SubjectType.MANDATORY.getDescription()
                 ),
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),
                         "MySQL",
-                        SUBJECT_TYPE_MANDATORY
+                        SubjectType.MANDATORY.getDescription()
                 ),
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),
                         "디자인 패턴",
-                        SUBJECT_TYPE_CHOICE
+                        SubjectType.CHOICE.getDescription()
                 ),
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),
                         "Spring Security",
-                        SUBJECT_TYPE_CHOICE
+                        SubjectType.CHOICE.getDescription()
                 ),
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),
                         "Redis",
-                        SUBJECT_TYPE_CHOICE
+                        SubjectType.CHOICE.getDescription()
                 ),
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),
                         "MongoDB",
-                        SUBJECT_TYPE_CHOICE
+                        SubjectType.CHOICE.getDescription()
                 )
         );
     }
@@ -159,53 +172,45 @@ public class CampManagementApplication {
     private static void createStudent() {
         System.out.println("\n수강생을 등록합니다...");
 
-        // 수강생 이름
-        System.out.print("수강생 이름 입력: ");
-        String studentName = sc.next();
-
-        // 개행문자 처리
         sc.nextLine();
 
+        // 수강생 이름
+        String studentName = getInput("수강생 이름 입력: ");
+
         // 필수 과목 입력
-        List<Subject> mandatorySubjects = getSubjectsByType(SUBJECT_TYPE_MANDATORY);
-        List<Subject> selectedMandatorySubjects = new ArrayList<>();
-        while (selectedMandatorySubjects.size() < 3) {
-            System.out.println("필수 과목(Java, 객체지향, Spring, JPA, MySQL)을 입력해주세요.");
-            String[] inputSubjects = sc.nextLine().split(",");
-
-            selectedMandatorySubjects = getValidSubjects(mandatorySubjects, inputSubjects);
-
-            System.out.println(selectedMandatorySubjects);
-            // 필수 과목 3개 이상 입력했는지 확인
-            if (selectedMandatorySubjects.size() < 3) {
-                System.out.println("필수 과목은 최소 3개 이상 선택해야 합니다.");
-            } else {
-                break;
-            }
-        }
-
+        List<Subject> mandatorySubjects = getSelectSubjects(SubjectType.MANDATORY,3);
         // 선택 과목 입력
-        List<Subject> choiceSubjects = getSubjectsByType(SUBJECT_TYPE_CHOICE);
-        List<Subject> selectedChoiceSubjects = new ArrayList<>();
-        while (selectedChoiceSubjects.size() < 2) {
-            System.out.println("선택 과목(디자인 패턴, Spring Security, Redis, MongoDB)을 입력해주세요.");
-            String[] inputSubjects = sc.nextLine().split(",");
-
-            selectedChoiceSubjects = getValidSubjects(choiceSubjects, inputSubjects);
-
-            // 필수 과목 3개 이상 입력했는지 확인
-            if (selectedChoiceSubjects.size() < 2) {
-                System.out.println("선택 과목은 최소 2개 이상 선택해야 합니다.");
-            } else {
-                break;
-            }
-        }
+        List<Subject> choiceSubjects = getSelectSubjects(SubjectType.CHOICE, 2);
 
         // 수강생 인스턴스 생성 및 저장
         System.out.println();
-        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, selectedChoiceSubjects, selectedMandatorySubjects);
+        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, mandatorySubjects, choiceSubjects);
         studentStore.add(student);
         System.out.println("수강생 등록 성공!\n");
+    }
+
+    // 과목 입력 메서드
+    private static List<Subject> getSelectSubjects(SubjectType type, int minRequired) {
+        List<Subject> availableSubjects = getSubjectsByType(type);
+        List<Subject> selectedSubjects = new ArrayList<>();
+
+        while (selectedSubjects.size() < minRequired){
+            System.out.printf("%s(%s)을 입력해주세요.\n",type.getDescription(), String.join(", ", availableSubjects.stream().map(Subject::getSubjectName).toList()));
+            String[] inputSubjects = getInput("").split(",");
+
+            selectedSubjects = getValidSubjects(availableSubjects, inputSubjects);
+
+            if (selectedSubjects.size() < minRequired)
+                System.out.printf("%s은 최고 %d개 이상 선택하야 합니다.\n", type.getDescription(), minRequired);
+        }
+
+        return selectedSubjects;
+    }
+
+    // 이름, 과목 입력 처리 메서드
+    private static String getInput(String s) {
+        System.out.print(s);
+        return sc.nextLine().trim();
     }
 
     // 유효한 과목 리스트를 반환하는 메서드
@@ -224,14 +229,10 @@ public class CampManagementApplication {
     }
 
     // 주어진 타입의 과목 리스트를 반환하는 메서드
-    private static List<Subject> getSubjectsByType(String type) {
-        List<Subject> subjects = new ArrayList<>();
-        for (Subject subject : subjectStore) {
-            if (subject.getSubjectType().equalsIgnoreCase(type)) {
-                subjects.add(subject);
-            }
-        }
-        return subjects;
+    private static List<Subject> getSubjectsByType(SubjectType type) {
+        return subjectStore.stream()
+                .filter(subject -> subject.getSubjectType().equalsIgnoreCase(type.getDescription()))
+                .collect(Collectors.toList());
     }
 
     // 수강생 목록 조회
@@ -243,9 +244,7 @@ public class CampManagementApplication {
             return;
         }
         // 수강생 목록 출력
-        for (Student student : studentStore) {
-            System.out.println(student); // Student 클래스의 toString() 메서드 사용
-        }
+        studentStore.forEach(System.out::println);
         System.out.println("\n수강생 목록 조회 성공!");
     }
 
@@ -289,6 +288,7 @@ public class CampManagementApplication {
         }
 
         System.out.print("과목 이름을 입력하세요: ");
+        displaySubjects(student);
         String subjectName = sc.next();
         Subject subject = findSubjectByName(subjectName);
 
@@ -317,12 +317,10 @@ public class CampManagementApplication {
 
     // 수강생 조회
     private static Student findStudentById(String studentId) {
-        for (Student student : studentStore) {
-            if (student.getStudentId().equals(studentId)) {
-                return student;
-            }
-        }
-        return null;
+        return studentStore.stream()
+                .filter(s -> s.getStudentId().equals(studentId))
+                .findFirst()
+                .orElse(null);
     }
 
     // 과목 조회
@@ -337,22 +335,58 @@ public class CampManagementApplication {
 
     // 점수 조회
     private static Score findScoreByStudentAndSubject(String studentId, String subjectId) {
-        for (Score score : scoreStore) {
-            if (score.getStudentId().equals(studentId) && score.getSubjectId().equals(subjectId)) {
-                return score;
-            }
-        }
-        return null;
+        return scoreStore.stream()
+                .filter(s -> s.getStudentId().equalsIgnoreCase(studentId) && s.getSubjectId().equalsIgnoreCase(subjectId))
+                .findFirst()
+                .orElse(null);
     }
 
 
     // 수강생의 과목별 회차 점수 수정
     private static void updateRoundScoreBySubject() {
         String studentId = getStudentId(); // 관리할 수강생 고유 번호
-        // 기능 구현 (수정할 과목 및 회차, 점수)
-        System.out.println("시험 점수를 수정합니다...");
-        // 기능 구현
-        System.out.println("\n점수 수정 성공!");
+        Student student = findStudentById(studentId);
+
+
+        if (student == null){
+            System.out.println("해당 학생을 찾을 수 없습니다.");
+            return;
+        }
+
+        System.out.println("수정할 과목을 선택하세요:");
+        displaySubjects(student);
+        String subjectName = sc.next();
+        Subject subject = findSubjectByName(subjectName);
+
+        System.out.println("수정할 회차를 입력하세요:");
+        int round = sc.nextInt();
+
+        System.out.println("새로운 점수를 입력하세요:");
+        int newScore = sc.nextInt();
+
+        try {
+            Score score = findScoreByStudentAndSubject(studentId, subject.getSubjectId());
+            if (score == null){
+                System.out.println("해당 과목의 점수 정보를 찾을 수 없습니다.");
+                return;
+            }
+
+            score.updateScore(round, newScore);
+            System.out.println("점수가 성공적으로 수정되었습니다.");
+            System.out.println("시험 점수를 수정합니다...");
+            System.out.println("\n점수 수정 성공!");
+        }catch (ScoreException e){
+            System.out.println("점수 수정 중 오류 발생 : "+e.getMessage());
+        }
+    }
+
+    // 학생이 고른 필수 과목 목록과 선택 과목 목록 보여주는 메서드
+    private static void displaySubjects(Student student){
+        System.out.println("\n"+"필수 과목:");
+        student.getMandatorySubjects().forEach(s -> System.out.print(s.getSubjectName() + ", "));
+        System.out.println("\n"+"선택 과목:");
+        student.getChoiceSubjects().forEach(s -> System.out.print(s.getSubjectName() + ", "));
+        System.out.println();
     }
 
     // 수강생의 특정 과목 회차별 등급 조회

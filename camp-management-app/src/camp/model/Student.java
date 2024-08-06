@@ -8,7 +8,7 @@ public class Student {
     private List<Subject> mandatorySubjects;
     private List<Subject> choiceSubjects;
 
-    public Student(String seq, String studentName, List<Subject> choiceSubjects, List<Subject> mandatorySubjects) {
+    public Student(String seq, String studentName, List<Subject> mandatorySubjects, List<Subject> choiceSubjects) {
         this.studentId = seq;
         this.studentName = studentName;
         this.mandatorySubjects = mandatorySubjects;
