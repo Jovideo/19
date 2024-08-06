@@ -1,6 +1,5 @@
 package camp.model;
 
-import java.lang.invoke.StringConcatFactory;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,6 +50,7 @@ public class Score {
         return grades;
     }
 
+    // 점수를 추가하거나 업데이트하는 메서드
     public void addScore(int round, int score) throws ScoreException {
         validateRound(round);
         validateScore(score);
@@ -64,6 +64,7 @@ public class Score {
         grades.put(round, grade);
     }
 
+    // 점수를 업데이트하는 메서드
     public void updateScore(int round, int score) throws ScoreException {
         validateRound(round);
         validateScore(score);
@@ -77,12 +78,14 @@ public class Score {
         grades.put(round, grade);
     }
 
+    // 회차 유효성 검사를 위한 메서드
     private void validateRound(int round) throws ScoreException {
         if (round < 1 || round > 10) {
             throw new ScoreException("회차는 1부터 10까지의 값만 허용됩니다.");
         }
     }
 
+    // 점수 유효성 검사를 위한 메서드
     private void validateScore(int score) throws ScoreException {
         if (score < 0 || score > 100) {
             throw new ScoreException("점수는 0부터 100까지의 값만 허용됩니다.");
@@ -108,6 +111,7 @@ public class Score {
         else if (score >= 50) return "F";
         else return "N";
     }
+
     // 과목에 따라 적절한 등급 결정 메서드
     private String determineGrade(int score) {
         // 필수 과목과 선택 과목을 구분하여 등급을 결정합니다.
@@ -120,10 +124,6 @@ public class Score {
 
     // 과목이 필수 과목인지 여부를 확인하는 메서드
     private boolean isMandatorySubject() {
-        // 과목 ID를 기준으로 필수 과목 여부를 결정합니다.
-        // 예를 들어, 필수 과목의 ID가 특정 패턴을 따르거나 별도의 목록을 관리할 수 있습니다.
-        // 여기에 적절한 필수 과목 ID 확인 로직을 구현합니다.
-        // 아래는 예시로 특정 ID 패턴을 사용한 경우입니다.
         return subjectId.startsWith("MANDATORY_");
     }
 

@@ -5,7 +5,12 @@ import camp.model.ScoreException;
 import camp.model.Student;
 import camp.model.Subject;
 
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
 
 public class CampManagementApplication {
     // 데이터 저장소
@@ -295,6 +300,12 @@ public class CampManagementApplication {
             return;
         }
 
+        // 수강생이 선택한 과목인지 확인
+        if (!isSubjectSelectedByStudent(student, subject)) {
+        System.out.println("수강생이 선택하지 않은 과목입니다.");
+        return;
+        }
+
         System.out.print("시험 회차를 입력하세요 (1-10): ");
         int round = sc.nextInt();
         System.out.print("점수를 입력하세요 (0-100): ");
@@ -312,10 +323,14 @@ public class CampManagementApplication {
             System.out.println("점수 등록 실패: " + e.getMessage());
         }
     }
+    // 수강생이 해당 과목을 선택했는지 확인하는 메서드
+    private static boolean isSubjectSelectedByStudent(Student student, Subject subject) {
+        return student.getMandatorySubjects().contains(subject) || student.getChoiceSubjects().contains(subject);
+    }
 
     // 수강생 조회
     private static Student findStudentById(String studentId) {
-        for (Student student : studentStore) {
+        for (Student student : studentStore) {;
             if (student.getStudentId().equals(studentId)) {
                 return student;
             }
@@ -355,7 +370,7 @@ public class CampManagementApplication {
 
     // 수강생의 특정 과목 회차별 등급 조회
 
-    private static void inquireRoundGradeBySubject() {
+   private static void inquireRoundGradeBySubject() {
         String studentId = getStudentId(); // 관리할 수강생 고유 번호
         Student student = findStudentById(studentId);
         if (student == null) {
@@ -374,7 +389,11 @@ public class CampManagementApplication {
             System.out.println("등록된 과목이 없습니다.");
             return;
         }
-
+       // 수강생이 선택한 과목인지 확인
+       if (!isSubjectSelectedByStudent(student, subject)) {
+           System.out.println("수강생이 선택하지 않은 과목입니다.");
+           return;
+       }
         // 수강생의 회차 및 등급 조회
         if(getGrades(studentId,subjectName)!=null){
             getGrades(studentId,subjectName).forEach((round,grade)->{
