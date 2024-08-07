@@ -233,6 +233,38 @@ public class CampManagementApplication {
     // 수강생의 특정 과목 회차별 등급 조회
     private static void inquireRoundGradeBySubject() {
         String studentId = getStudentId(); // 관리할 수강생 고유 번호
+<<<<<<< Updated upstream
+=======
+        Student student = findStudentById(studentId);
+        if (student == null) {
+            System.out.println("등록된 수강생이 없습니다.");
+            return;
+        }
+
+        // 수강생의 과목 조회
+        getSubjects(studentId);
+        System.out.println();
+
+        System.out.print("과목 이름을 입력하세요: ");
+        String subjectName = sc.next();
+        Subject subject = findSubjectByName(subjectName);
+        if (subject == null) {
+            System.out.println("등록된 과목이 없습니다.");
+            return;
+        }
+        
+        // 수강생의 회차 및 등급 조회
+        Map<Integer, String> grades = getGrades(studentId, subjectName);
+        if (grades != null) {
+            grades.forEach((round, grade) -> {
+                System.out.println(round + "회차| " + grade);
+            });
+        } else {
+            System.out.println("등록된 회차 별 등급이 없습니다");
+            return;
+        }
+
+>>>>>>> Stashed changes
         // 기능 구현 (조회할 특정 과목)
         System.out.println("회차별 등급을 조회합니다...");
         // 기능 구현
