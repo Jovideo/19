@@ -11,22 +11,6 @@ public class CampManagementApplication {
     private static List<Subject> subjectStore = new ArrayList<>();
     private static List<Score> scoreStore = new ArrayList<>();
 
-    // 과목 타입
-    private enum SubjectType{
-        MANDATORY("필수과목"),
-        CHOICE("선택과목");
-
-        private final String description;
-
-        SubjectType(String description){
-            this.description = description;
-        }
-        
-        public String getDescription(){
-            return description;
-        }
-    }
-
     // index 관리 필드
     private static int studentIndex = 0;
     private static final String INDEX_TYPE_STUDENT = "ST";
@@ -49,52 +33,52 @@ public class CampManagementApplication {
 
     // 초기 데이터 생성
     private static void setInitData() {
-        subjectStore = List.of(
+        subjectStore = new ArrayList<>(Arrays.asList(
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),
                         "Java",
-                        SubjectType.MANDATORY.getDescription()
+                        SubjectType.MANDATORY
                 ),
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),
                         "객체지향",
-                        SubjectType.MANDATORY.getDescription()
+                        SubjectType.MANDATORY
                 ),
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),
                         "Spring",
-                        SubjectType.MANDATORY.getDescription()
+                        SubjectType.MANDATORY
                 ),
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),
                         "JPA",
-                        SubjectType.MANDATORY.getDescription()
+                        SubjectType.MANDATORY
                 ),
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),
                         "MySQL",
-                        SubjectType.MANDATORY.getDescription()
+                        SubjectType.MANDATORY
                 ),
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),
                         "디자인 패턴",
-                        SubjectType.CHOICE.getDescription()
+                        SubjectType.CHOICE
                 ),
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),
                         "Spring Security",
-                        SubjectType.CHOICE.getDescription()
+                        SubjectType.CHOICE
                 ),
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),
                         "Redis",
-                        SubjectType.CHOICE.getDescription()
+                        SubjectType.CHOICE
                 ),
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),
                         "MongoDB",
-                        SubjectType.CHOICE.getDescription()
-                )
+                        SubjectType.CHOICE
+                ))
         );
     }
 
@@ -239,7 +223,7 @@ public class CampManagementApplication {
     // 주어진 타입의 과목 리스트를 반환하는 메서드
     private static List<Subject> getSubjectsByType(SubjectType type) {
         return subjectStore.stream()
-                .filter(subject -> subject.getSubjectType().equalsIgnoreCase(type.getDescription()))
+                .filter(subject -> subject.getSubjectType() == type)
                 .collect(Collectors.toList());
     }
 
