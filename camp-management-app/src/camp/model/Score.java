@@ -95,8 +95,7 @@ public class Score {
         else if (score >= 90) return "B";
         else if (score >= 80) return "C";
         else if (score >= 70) return "D";
-        else if (score >= 60) return "F";
-        else return "N";
+        else  return "F";
     }
 
     // 선택 과목의 등급 결정
@@ -105,8 +104,7 @@ public class Score {
         else if (score >= 80) return "B";
         else if (score >= 70) return "C";
         else if (score >= 60) return "D";
-        else if (score >= 50) return "F";
-        else return "N";
+        else return "F";
     }
     // 과목에 따라 적절한 등급 결정 메서드
     private String determineGrade(int score) {
